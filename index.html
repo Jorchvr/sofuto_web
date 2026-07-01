@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="matrix" data-layout="gallery" data-persona="demo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS MUSEO — Portfolio Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface:  'rgb(var(--surface)  / <alpha-value>)',
+            elevated: 'rgb(var(--elevated) / <alpha-value>)',
+            accent:   'rgb(var(--accent)   / <alpha-value>)',
+            muted:    'rgb(var(--muted)    / <alpha-value>)',
+            ink:      'rgb(var(--ink)      / <alpha-value>)',
+            ink2:     'rgb(var(--ink2)     / <alpha-value>)',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/feedback.css">
+</head>
+<body>
+
+  <!-- Matrix Rain Canvas -->
+  <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+  <!-- Museum Shell -->
+  <div class="museum-shell">
+
+    <!-- Sidebar -->
+    <aside class="museum-sidebar" aria-label="Lista de exhibiciones">
+      <div class="sidebar-header">
+        <div class="museum-logo">
+          <span class="logo-bracket">[</span>NEXUS<span style="color:rgb(var(--ink2))"> MUSEO</span><span class="logo-bracket">]</span>
+        </div>
+        <button class="btn-add" data-open-modal="add-exhibit" aria-haspopup="dialog">
+          + Nueva
+        </button>
+      </div>
+
+      <div class="sidebar-scroll">
+        <div id="exhibit-list" class="exhibit-list" aria-label="Proyectos">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="slide-counter-small" aria-live="polite" aria-label="Contador de exhibiciones">
+          <span class="counter-label">Exhibición</span>
+          <span id="current-slide">01</span>
+          <span class="counter-sep">/</span>
+          <span id="total-slides">00</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Stage -->
+    <main class="museum-main" id="museum-main">
+
+      <!-- Top bar -->
+      <div class="stage-topbar" aria-label="Información de la exhibición actual">
+        <div class="stage-breadcrumb">
+          <span id="exhibit-year-badge" aria-label="Año"></span>
+          <span id="exhibit-type-badge" aria-label="Tipo de media"></span>
+        </div>
+        <div class="stage-counter" aria-live="polite">
+          <span id="current-slide-top">01</span> / <span id="total-slides-top">00</span>
+        </div>
+      </div>
+
+      <!-- Exhibit Display -->
+      <div class="exhibit-stage" id="exhibit-stage" data-fx="glitch" data-direction="next">
+        <div class="exhibit-media-wrap" id="exhibit-media" aria-live="polite" aria-label="Media de la exhibición">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+
+      <!-- Info Bar -->
+      <div class="exhibit-info-bar" id="exhibit-info" aria-label="Detalles de la exhibición">
+        <div class="exhibit-meta">
+          <h2 class="exhibit-title" id="exhibit-title">—</h2>
+          <p class="exhibit-description" id="exhibit-description">—</p>
+        </div>
+        <div class="exhibit-actions">
+          <div class="exhibit-tags" id="exhibit-tags" aria-label="Tecnologías"></div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <a class="exhibit-link" id="exhibit-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+              Ver Proyecto →
+            </a>
+            <button class="exhibit-edit" id="exhibit-edit" aria-label="Editar esta exhibición">
+              ✏ Editar
+            </button>
+            <button class="exhibit-delete" id="exhibit-delete" aria-label="Eliminar esta exhibición">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <button class="nav-arrow nav-prev" id="btn-prev" aria-label="Exhibición anterior (← flecha)">
+        ←
+      </button>
+      <button class="nav-arrow nav-next" id="btn-next" aria-label="Siguiente exhibición (→ flecha)">
+        →
+      </button>
+
+    </main>
+  </div>
+
+  <!-- Add Exhibit Modal -->
+  <div data-modal="add-exhibit"
+       class="modal-backdrop"
+       role="dialog"
+       aria-modal="true"
+       aria-hidden="true"
+       aria-labelledby="modal-add-title">
+    <div class="modal-body">
+      <header class="modal-header">
+        <h3 id="modal-add-title" class="modal-title">[ + NUEVA EXHIBICIÓN ]</h3>
+        <button data-close-modal aria-label="Cerrar modal">×</button>
+      </header>
+
+      <form id="form-add-exhibit" class="modal-form" novalidate autocomplete="off">
+
+        <div class="form-group">
+          <label for="field-title">Título <span style="color:rgb(var(--accent))">*</span></label>
+          <input id="field-title" name="title" type="text" required
+                 placeholder="Nombre del proyecto o página" maxlength="80">
+        </div>
+
+        <div class="form-group">
+          <label for="field-description">Descripción <span style="color:rgb(var(--accent))">*</span></label>
+          <textarea id="field-description" name="description" required
+                    placeholder="Qué es este proyecto, qué tecnologías usa, qué hace..."
+                    rows="3" maxlength="600"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="field-type">Tipo de media</label>
+          <select id="field-type" name="type">
+            <option value="project">Proyecto / Screenshot</option>
+            <option value="image">Imagen</option>
+            <option value="video">Video (YouTube o .mp4)</option>
+            <option value="text">Solo texto / Markdown</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="field-media-group">
+          <label for="field-media-url">
+            URL de imagen o video
+            <span class="label-hint">(opcional)</span>
+          </label>
+          <input id="field-media-url" name="media_url" type="text"
+                 placeholder="https://... (imagen, YouTube, o video .mp4)">
+        </div>
+
+        <div class="form-group" id="field-content-group" hidden>
+          <label for="field-content">Contenido en texto / Markdown</label>
+          <textarea id="field-content" name="content"
+                    placeholder="# Título&#10;&#10;Escribe aquí el contenido de tu exhibición...&#10;Soporta **negritas**, *cursivas* y listas."
+                    rows="6"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="field-link">
+            Enlace al proyecto
+            <span class="label-hint">(opcional)</span>
+          </label>
+          <input id="field-link" name="link" type="text"
+                 placeholder="https://mi-proyecto.com">
+        </div>
+
+        <div class="form-group">
+          <label for="field-tags">
+            Tags
+            <span class="label-hint">(separados por comas)</span>
+          </label>
+          <input id="field-tags" name="tags" type="text"
+                 placeholder="Rails, Ruby, PostgreSQL, API">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" data-close-modal class="btn-cancel">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-submit" id="btn-form-submit">
+            + Añadir al Museo
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Exhibit Modal -->
+  <div data-modal="edit-exhibit"
+       class="modal-backdrop"
+       role="dialog"
+       aria-modal="true"
+       aria-hidden="true"
+       aria-labelledby="modal-edit-title">
+    <div class="modal-body">
+      <header class="modal-header">
+        <h3 id="modal-edit-title" class="modal-title">[ ✏ EDITAR EXHIBICIÓN ]</h3>
+        <button data-close-modal aria-label="Cerrar modal">×</button>
+      </header>
+
+      <form id="form-edit-exhibit" class="modal-form" novalidate autocomplete="off">
+        <input type="hidden" id="edit-field-id" name="id">
+
+        <div class="form-group">
+          <label for="edit-field-title">Título <span style="color:rgb(var(--accent))">*</span></label>
+          <input id="edit-field-title" name="title" type="text" required maxlength="80">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-field-description">Descripción</label>
+          <textarea id="edit-field-description" name="description" rows="3" maxlength="600"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-field-type">Tipo de media</label>
+          <select id="edit-field-type" name="type">
+            <option value="project">Proyecto / Screenshot</option>
+            <option value="image">Imagen</option>
+            <option value="video">Video (YouTube o .mp4)</option>
+            <option value="text">Solo texto / Markdown</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="edit-field-media-group">
+          <label for="edit-field-media-url">
+            URL de imagen o video
+            <span class="label-hint">(ruta local o https://...)</span>
+          </label>
+          <input id="edit-field-media-url" name="media_url" type="text"
+                 placeholder="assets/images/mi-foto.png  o  https://youtube.com/watch?v=...">
+        </div>
+
+        <div class="form-group" id="edit-field-content-group" hidden>
+          <label for="edit-field-content">Contenido en texto / Markdown</label>
+          <textarea id="edit-field-content" name="content" rows="6"
+                    placeholder="# Título&#10;&#10;Escribe el contenido..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-field-link">Enlace al proyecto <span class="label-hint">(opcional)</span></label>
+          <input id="edit-field-link" name="link" type="text" placeholder="https://mi-proyecto.com">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-field-tags">Tags <span class="label-hint">(separados por comas)</span></label>
+          <input id="edit-field-tags" name="tags" type="text" placeholder="Rails, Ruby, PostgreSQL">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-field-year">Año</label>
+          <input id="edit-field-year" name="year" type="number" min="2000" max="2099" placeholder="2025">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" data-close-modal class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit" id="btn-edit-submit">
+            ✓ Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Control Bar -->
+  <div id="proto-controls">
+    <div class="proto-hint">← → navegar · ESC cerrar · Shift+? historial</div>
+    <div class="proto-bar" role="toolbar" aria-label="Controles del prototipo">
+
+      <div class="proto-bar-section">
+        <span class="proto-bar-label">Tema</span>
+        <div class="proto-seg-group" role="group" aria-label="Tema de color">
+          <button class="proto-seg" data-theme-option="matrix" aria-pressed="true">Matrix</button>
+          <button class="proto-seg" data-theme-option="cyber"  aria-pressed="false">Cyber</button>
+          <button class="proto-seg" data-theme-option="void"   aria-pressed="false">Void</button>
+        </div>
+      </div>
+
+      <div class="proto-bar-section">
+        <span class="proto-bar-label">Vista</span>
+        <div class="proto-seg-group" role="group" aria-label="Modo de vista">
+          <button class="proto-seg" data-layout-option="gallery"   aria-pressed="true">Galería</button>
+          <button class="proto-seg" data-layout-option="immersive" aria-pressed="false">Inmersivo</button>
+        </div>
+      </div>
+
+      <div class="proto-bar-section">
+        <span class="proto-bar-label">Transición</span>
+        <div class="proto-seg-group" role="group" aria-label="Efecto de transición">
+          <button class="proto-seg" data-fx-option="glitch" aria-pressed="true">Glitch</button>
+          <button class="proto-seg" data-fx-option="fade"   aria-pressed="false">Fade</button>
+          <button class="proto-seg" data-fx-option="slide"  aria-pressed="false">Slide</button>
+        </div>
+      </div>
+
+      <div class="proto-bar-section">
+        <span class="proto-bar-label">Modo</span>
+        <div class="proto-seg-group" role="group" aria-label="Persona">
+          <button class="proto-seg" data-persona-option="demo"  aria-pressed="true">Demo</button>
+          <button class="proto-seg" data-persona-option="empty" aria-pressed="false">Vacío</button>
+        </div>
+      </div>
+
+      <div class="proto-bar-section">
+        <button class="proto-seg" data-share title="Copiar URL de esta pantalla" aria-label="Compartir URL">🔗</button>
+        <button class="proto-seg" data-feedback-toggle title="Abrir panel de feedback" aria-label="Feedback">💬</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Script order: state → theme → layout → data → persona → ui → app → feedback -->
+  <script src="js/state.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/persona.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="matrix" data-layout="gallery" data-persona="demo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — NEXUS MUSEO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/feedback.css">
+  <style>
+    .error-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px calc(6rem + 40px);
+      position: relative;
+      z-index: 1;
+    }
+    .error-code {
+      font-size: clamp(80px, 15vw, 160px);
+      font-weight: 700;
+      color: rgb(var(--accent));
+      letter-spacing: -4px;
+      line-height: 1;
+      opacity: 0.15;
+    }
+    .error-label {
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgb(var(--accent));
+      margin-top: -20px;
+      margin-bottom: 20px;
+    }
+    .error-msg {
+      font-size: 12px;
+      color: rgb(var(--ink2));
+      max-width: 320px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .btn-home {
+      padding: 10px 24px;
+      border: 1px solid rgb(var(--accent) / 0.5);
+      border-radius: var(--radius);
+      background: rgb(var(--accent) / 0.1);
+      color: rgb(var(--accent));
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.15s;
+    }
+    .btn-home:hover { background: rgb(var(--accent) / 0.2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+  <div class="error-shell">
+    <div class="error-code" aria-hidden="true">404</div>
+    <div class="error-label">[ EXHIBICIÓN NO ENCONTRADA ]</div>
+    <p class="error-msg">
+      La página o exhibición que buscas no existe en este museo.<br>
+      Puede que haya sido eliminada o que la URL sea incorrecta.
+    </p>
+    <a href="index.html" class="btn-home">← Volver al Museo</a>
+  </div>
+
+  <div id="proto-controls">
+    <div class="proto-bar">
+      <div class="proto-bar-section">
+        <div class="proto-seg-group">
+          <button class="proto-seg" data-theme-option="matrix" aria-pressed="true">Matrix</button>
+          <button class="proto-seg" data-theme-option="cyber"  aria-pressed="false">Cyber</button>
+          <button class="proto-seg" data-theme-option="void"   aria-pressed="false">Void</button>
+        </div>
+      </div>
+      <div class="proto-bar-section">
+        <button class="proto-seg" data-share>🔗</button>
+        <button class="proto-seg" data-feedback-toggle>💬</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/state.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/persona.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (function() {
+      const canvas = document.getElementById('matrix-bg');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const chars = 'ｦｧｱｲｳｴｵｶｷｸｹｺ0123456789ABCDEF<>{}|404';
+      const fs = 14;
+      const drops = Array.from({ length: Math.floor(canvas.width/fs) }, () => Math.random() * -60);
+      function draw() {
+        ctx.fillStyle = 'rgba(10,12,15,0.05)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.font = `${fs}px 'Space Mono',monospace`;
+        drops.forEach((y,i) => {
+          const c = chars[Math.floor(Math.random()*chars.length)];
+          ctx.fillStyle = i % 10 === 0 ? '#ffffff' : '#00ff41';
+          ctx.globalAlpha = 0.2 + Math.random() * 0.4;
+          ctx.fillText(c, i*fs, y*fs);
+          ctx.globalAlpha = 1;
+          if (y*fs > canvas.height && Math.random()>.975) drops[i]=0;
+          drops[i]++;
+        });
+      }
+      let last = 0;
+      function loop(ts) { if(ts-last>48){draw();last=ts;} requestAnimationFrame(loop); }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>
