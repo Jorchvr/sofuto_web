@@ -815,13 +815,145 @@ body { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)); }
 .proto-history a { color:rgb(var(--ink)); text-decoration:none; }
 .proto-history a:hover { color:rgb(var(--accent)); }
 
-/* ── RESPONSIVE ────────────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .museum-sidebar { width: 0; opacity: 0; pointer-events: none; }
-  html[data-layout="gallery"] .museum-sidebar { width: 0; opacity: 0; }
-  .exhibit-info-bar { flex-direction: column; gap: 8px; }
-  .exhibit-actions { align-items: flex-start; }
+/* ── HAMBURGER BUTTON ──────────────────────────────────────────────────────── */
+.btn-menu {
+  display: none;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgb(var(--accent) / 0.3);
+  border-radius: var(--radius);
+  background: transparent;
+  color: rgb(var(--accent));
+  font-size: 15px;
+  transition: background 0.15s;
+}
+.btn-menu:hover { background: rgb(var(--accent) / 0.1); }
+
+/* Close button inside sidebar (mobile only) */
+.btn-sidebar-close {
+  display: none;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(var(--accent) / 0.2);
+  border-radius: var(--radius);
+  background: transparent;
+  color: rgb(var(--ink2));
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+.btn-sidebar-close:hover { color: rgb(var(--ink)); }
+
+/* Sidebar backdrop (mobile overlay) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* ── RESPONSIVE — TABLET (≤ 1024px) ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .museum-sidebar { width: 240px; min-width: 240px; }
+  .exhibit-title  { font-size: 14px; }
+}
+
+/* ── RESPONSIVE — MOBILE (≤ 768px) ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Show hamburger, hide sidebar by default */
+  .btn-menu { display: flex; }
+  .btn-sidebar-close { display: flex; }
+
+  /* Sidebar becomes a fixed overlay from the left */
+  .museum-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 20;
+    width: 280px !important;
+    min-width: 0 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: none;
+    border-right: 1px solid rgb(var(--accent) / 0.25);
+  }
+
+  /* Immersive layout: sidebar never shows */
+  html[data-layout="immersive"] .museum-sidebar {
+    transform: translateX(-100%) !important;
+  }
+
+  /* Open state */
+  .museum-shell.sidebar-open .museum-sidebar {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0,0,0,0.5);
+  }
+  .museum-shell.sidebar-open .sidebar-backdrop {
+    display: block;
+  }
+
+  /* Topbar */
+  .stage-topbar { padding: 0 10px; gap: 8px; }
+  .stage-breadcrumb span { font-size: 9px; padding: 2px 5px; }
+
+  /* Exhibit stage: taller, less padding */
+  .exhibit-media-wrap { padding: 8px; }
+
+  /* Info bar: stacked */
+  .exhibit-info-bar {
+    flex-direction: column;
+    gap: 8px;
+    min-height: unset;
+    max-height: 160px;
+    padding: 10px 12px;
+    overflow-y: auto;
+  }
+  .exhibit-meta { min-width: 0; }
+  .exhibit-title { font-size: 14px; white-space: normal; }
+  .exhibit-description { -webkit-line-clamp: 2; }
+  .exhibit-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
   .exhibit-tags { justify-content: flex-start; }
-  .nav-arrow { width: 32px; height: 32px; font-size: 13px; }
-  .stage-topbar { padding: 0 10px; }
+
+  /* Nav arrows: smaller and closer to edge */
+  .nav-arrow { width: 32px; height: 32px; font-size: 13px; opacity: 0.7; }
+  .nav-prev { left: 4px; }
+  .nav-next { right: 4px; }
+
+  /* Modal: near full-screen */
+  .modal-backdrop { padding: 0; align-items: flex-end; }
+  .modal-body {
+    max-width: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  /* Hide layout switcher (gallery/immersive) on mobile, always gallery */
+  [data-layout-option] { display: none; }
+}
+
+/* ── RESPONSIVE — SMALL MOBILE (≤ 420px) ───────────────────────────────────── */
+@media (max-width: 420px) {
+  .museum-logo { font-size: 11px; }
+  .btn-add { font-size: 10px; padding: 4px 8px; }
+  .exhibit-title { font-size: 13px; }
+  .stage-counter { font-size: 10px; }
+  .proto-seg { padding: .25rem .5rem; font-size: .65rem; }
+  .tag { font-size: 8px; padding: 1px 5px; }
 }

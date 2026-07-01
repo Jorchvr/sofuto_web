@@ -35,15 +35,21 @@
   <!-- Museum Shell -->
   <div class="museum-shell">
 
+    <!-- Sidebar backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
     <!-- Sidebar -->
-    <aside class="museum-sidebar" aria-label="Lista de exhibiciones">
+    <aside class="museum-sidebar" id="museum-sidebar" aria-label="Lista de exhibiciones">
       <div class="sidebar-header">
         <div class="museum-logo">
           <span class="logo-bracket">[</span>NEXUS<span style="color:rgb(var(--ink2))"> MUSEO</span><span class="logo-bracket">]</span>
         </div>
-        <button class="btn-add" data-open-modal="add-exhibit" aria-haspopup="dialog">
-          + Nueva
-        </button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="btn-add" data-open-modal="add-exhibit" aria-haspopup="dialog">
+            + Nueva
+          </button>
+          <button class="btn-sidebar-close" id="btn-sidebar-close" aria-label="Cerrar menú">×</button>
+        </div>
       </div>
 
       <div class="sidebar-scroll">
@@ -67,6 +73,7 @@
 
       <!-- Top bar -->
       <div class="stage-topbar" aria-label="Información de la exhibición actual">
+        <button class="btn-menu" id="btn-menu" aria-label="Abrir menú de proyectos">☰</button>
         <div class="stage-breadcrumb">
           <span id="exhibit-year-badge" aria-label="Año"></span>
           <span id="exhibit-type-badge" aria-label="Tipo de media"></span>

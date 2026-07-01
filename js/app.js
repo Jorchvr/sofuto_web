@@ -541,6 +541,7 @@
     Museum.init();
     AddModal.init();
     EditModal.init();
+    initMobileSidebar();
 
     // Modal triggers
     document.addEventListener('click', (e) => {
@@ -580,5 +581,36 @@
     window.Museum = Museum;
     window.Store = Store;
   });
+
+  // ─── MOBILE SIDEBAR ──────────────────────────────────────────────────────────
+  function initMobileSidebar() {
+    const shell    = document.querySelector('.museum-shell');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const btnOpen  = document.getElementById('btn-menu');
+    const btnClose = document.getElementById('btn-sidebar-close');
+
+    function openSidebar() {
+      shell?.classList.add('sidebar-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      shell?.classList.remove('sidebar-open');
+      document.body.style.overflow = '';
+    }
+
+    btnOpen?.addEventListener('click', openSidebar);
+    btnClose?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
+
+    // Close sidebar when user picks an exhibit (mobile UX)
+    document.getElementById('exhibit-list')?.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && shell?.classList.contains('sidebar-open')) closeSidebar();
+    });
+  }
 
 })();
