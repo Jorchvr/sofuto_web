@@ -78,8 +78,13 @@
           <span id="exhibit-year-badge" aria-label="Año"></span>
           <span id="exhibit-type-badge" aria-label="Tipo de media"></span>
         </div>
-        <div class="stage-counter" aria-live="polite">
-          <span id="current-slide-top">01</span> / <span id="total-slides-top">00</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <a href="galeria.html" class="btn-gallery-hall" title="Ver sala de galería" aria-label="Abrir sala de galería">
+            🖼 Sala
+          </a>
+          <div class="stage-counter" aria-live="polite">
+            <span id="current-slide-top">01</span> / <span id="total-slides-top">00</span>
+          </div>
         </div>
       </div>
 
@@ -163,11 +168,29 @@
 
         <div class="form-group" id="field-media-group">
           <label for="field-media-url">
-            URL de imagen o video
+            URL de imagen principal
             <span class="label-hint">(opcional)</span>
           </label>
           <input id="field-media-url" name="media_url" type="text"
-                 placeholder="https://... (imagen, YouTube, o video .mp4)">
+                 placeholder="https://... o assets/images/foto.png">
+        </div>
+
+        <div class="form-group" id="field-images-group">
+          <label for="field-images">
+            Imágenes adicionales
+            <span class="label-hint">(URLs separadas por comas — opcional)</span>
+          </label>
+          <textarea id="field-images" name="images_raw" rows="2"
+                    placeholder="https://img1.com, https://img2.com"></textarea>
+        </div>
+
+        <div class="form-group" id="field-video-group">
+          <label for="field-video">
+            Video
+            <span class="label-hint">(YouTube o .mp4 — opcional)</span>
+          </label>
+          <input id="field-video" name="video" type="text"
+                 placeholder="https://youtube.com/watch?v=...">
         </div>
 
         <div class="form-group" id="field-content-group" hidden>
@@ -246,11 +269,29 @@
 
         <div class="form-group" id="edit-field-media-group">
           <label for="edit-field-media-url">
-            URL de imagen o video
+            URL de imagen principal
             <span class="label-hint">(ruta local o https://...)</span>
           </label>
           <input id="edit-field-media-url" name="media_url" type="text"
-                 placeholder="assets/images/mi-foto.png  o  https://youtube.com/watch?v=...">
+                 placeholder="assets/images/mi-foto.png  o  https://...">
+        </div>
+
+        <div class="form-group" id="edit-field-images-group">
+          <label for="edit-field-images">
+            Imágenes adicionales
+            <span class="label-hint">(URLs separadas por comas — aparecen en la galería)</span>
+          </label>
+          <textarea id="edit-field-images" name="images_raw" rows="3"
+                    placeholder="https://img1.com, assets/img2.png, https://img3.com"></textarea>
+        </div>
+
+        <div class="form-group" id="edit-field-video-group">
+          <label for="edit-field-video">
+            Video
+            <span class="label-hint">(YouTube o .mp4 — botón ▶ en galería)</span>
+          </label>
+          <input id="edit-field-video" name="video" type="text"
+                 placeholder="https://youtube.com/watch?v=...  o  assets/video.mp4">
         </div>
 
         <div class="form-group" id="edit-field-content-group" hidden>

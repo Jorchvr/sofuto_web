@@ -359,6 +359,8 @@
       document.getElementById('edit-field-description').value = ex.description || '';
       document.getElementById('edit-field-type').value        = ex.type || 'project';
       document.getElementById('edit-field-media-url').value   = ex.media_url || '';
+      document.getElementById('edit-field-images').value      = (ex.images || []).join(', ');
+      document.getElementById('edit-field-video').value       = ex.video || '';
       document.getElementById('edit-field-content').value     = ex.content || '';
       document.getElementById('edit-field-link').value        = ex.link || '';
       document.getElementById('edit-field-tags').value        = (ex.tags || []).join(', ');
@@ -374,6 +376,11 @@
     updateExhibit(data) {
       data.tags = data.tags ? data.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
       data.year = parseInt(data.year, 10) || new Date().getFullYear();
+      const rawImages = data.images_raw || '';
+      delete data.images_raw;
+      const parsed = rawImages.split(',').map(u => u.trim()).filter(Boolean);
+      data.images = parsed.length ? parsed : (data.media_url ? [data.media_url] : []);
+      data.video  = data.video || '';
       Store.update(data);
       this.exhibits = Store.get();
       const idx = this.exhibits.findIndex(e => String(e.id) === String(data.id));
@@ -468,6 +475,11 @@
           ? data.tags.split(',').map(t => t.trim()).filter(Boolean)
           : [];
         data.year = new Date().getFullYear();
+        const rawImages = data.images_raw || '';
+        delete data.images_raw;
+        const parsedImages = rawImages.split(',').map(u => u.trim()).filter(Boolean);
+        data.images = parsedImages.length ? parsedImages : (data.media_url ? [data.media_url] : []);
+        data.video  = data.video || '';
 
         Museum.addExhibit(data);
         form.reset();
