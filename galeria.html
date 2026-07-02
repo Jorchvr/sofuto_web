@@ -9,70 +9,101 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/feedback.css">
   <style>
-    /* ── GALLERY ROOM ─────────────────────────────────────────────────── */
-    html, body { height: 100%; overflow: hidden; }
+    html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
 
+    /* ═══════════════════════════════════════════════════════════════
+       GALLERY ROOM  —  topbar / wall / info-panel stacked in a column
+       No absolute-positioned UI inside the wall so nothing overlaps.
+    ════════════════════════════════════════════════════════════════ */
     .gallery-room {
       position: fixed;
-      inset: 0;
+      top: 0; left: 0; right: 0;
+      /* clear the prototype control bar at the bottom */
+      bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
       z-index: 1;
-      background:
-        linear-gradient(to bottom,
-          #080808 0%,
-          #141111 18%,
-          #1c1818 30%,
-          #1e1b1b 58%,
-          #111010 68%,
-          #080808 100%
-        );
     }
 
-    /* Ceiling strip */
-    .room-ceiling {
+    /* ── TOPBAR ──────────────────────────────────────────────────── */
+    .gallery-topbar {
       flex-shrink: 0;
-      height: 15%;
-      background: linear-gradient(to bottom, #050505 0%, #0e0c0c 100%);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      position: relative;
-    }
-    .room-ceiling::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: calc(50% - 1px);
-      transform: translateX(-50%);
-      width: 10px; height: 10px;
-      background: rgba(255,250,210,0.8);
-      border-radius: 50%;
-      box-shadow: 0 0 16px 6px rgba(255,250,210,0.45);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      background: #060404;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      z-index: 20;
     }
 
-    /* Wall area */
+    .btn-back-list {
+      font-size: 13px;
+      font-family: 'Space Mono', monospace;
+      color: rgb(var(--ink2));
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid rgb(var(--accent) / 0.25);
+      border-radius: var(--radius);
+      background: rgb(var(--elevated) / 0.9);
+      letter-spacing: 0.3px;
+      transition: color 0.12s, border-color 0.12s;
+    }
+    .btn-back-list:hover {
+      color: rgb(var(--accent));
+      border-color: rgb(var(--accent) / 0.55);
+      text-decoration: none;
+    }
+
+    .gallery-counter {
+      font-size: 14px;
+      color: rgb(var(--ink2));
+      letter-spacing: 1.5px;
+    }
+    .gallery-counter .sep { opacity: 0.35; margin: 0 2px; }
+
+    /* ── WALL — the painting area ────────────────────────────────── */
     .room-wall {
       flex: 1;
       position: relative;
       overflow: hidden;
-    }
-
-    /* Floor — thinner so wall has more space */
-    .room-floor {
-      flex-shrink: 0;
-      height: 20%;
+      /* Dark museum wall with ceiling gradient built-in */
       background:
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent calc(6.25% - 1px),
-          rgba(255,255,255,0.022) calc(6.25% - 1px),
-          rgba(255,255,255,0.022) 6.25%
-        ),
-        linear-gradient(to bottom, #141010 0%, #080606 100%);
-      border-top: 1px solid rgba(255,255,255,0.06);
+        linear-gradient(to bottom,
+          #060404 0%,
+          #0e0b0b 9%,
+          #1a1414 22%,
+          #1f1c1c 52%,
+          #161111 80%,
+          #0c0909 100%
+        );
     }
 
-    /* ── FRAMES TRACK ─────────────────────────────────────────────────── */
+    /* Ceiling spotlight fixture */
+    .room-wall::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px; height: 12px;
+      background: rgba(255,250,205,0.9);
+      border-radius: 50%;
+      box-shadow: 0 0 22px 9px rgba(255,250,200,0.45);
+      z-index: 5;
+    }
+
+    /* Floor line at the bottom of the wall */
+    .room-wall::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* ── FRAMES TRACK ────────────────────────────────────────────── */
     .frames-track {
       position: absolute;
       inset: 0;
@@ -89,112 +120,101 @@
       user-select: none;
     }
 
-    /* Position classes — bigger offsets for larger frames */
     .gallery-frame-item.pos-active {
-      transform: translate(-50%, -52%) scale(1) rotateY(0deg);
+      transform: translate(-50%, -54%) scale(1) rotateY(0deg);
       opacity: 1; z-index: 10;
     }
     .gallery-frame-item.pos-next1 {
-      transform: translate(calc(-50% + 460px), -50%) scale(0.65) rotateY(-18deg);
-      opacity: 0.55; z-index: 8;
+      transform: translate(calc(-50% + 490px), -52%) scale(0.63) rotateY(-19deg);
+      opacity: 0.48; z-index: 8;
     }
     .gallery-frame-item.pos-prev1 {
-      transform: translate(calc(-50% - 460px), -50%) scale(0.65) rotateY(18deg);
-      opacity: 0.55; z-index: 8;
+      transform: translate(calc(-50% - 490px), -52%) scale(0.63) rotateY(19deg);
+      opacity: 0.48; z-index: 8;
     }
     .gallery-frame-item.pos-next2 {
-      transform: translate(calc(-50% + 780px), -49%) scale(0.44) rotateY(-26deg);
-      opacity: 0.25; z-index: 6;
+      transform: translate(calc(-50% + 820px), -50%) scale(0.42) rotateY(-28deg);
+      opacity: 0.2; z-index: 6;
     }
     .gallery-frame-item.pos-prev2 {
-      transform: translate(calc(-50% - 780px), -49%) scale(0.44) rotateY(26deg);
-      opacity: 0.25; z-index: 6;
+      transform: translate(calc(-50% - 820px), -50%) scale(0.42) rotateY(28deg);
+      opacity: 0.2; z-index: 6;
     }
     .gallery-frame-item.pos-next3 {
-      transform: translate(calc(-50% + 1040px), -48%) scale(0.3) rotateY(-32deg);
-      opacity: 0.1; z-index: 4;
+      transform: translate(calc(-50% + 1080px), -49%) scale(0.27) rotateY(-34deg);
+      opacity: 0.07; z-index: 4;
     }
     .gallery-frame-item.pos-prev3 {
-      transform: translate(calc(-50% - 1040px), -48%) scale(0.3) rotateY(32deg);
-      opacity: 0.1; z-index: 4;
+      transform: translate(calc(-50% - 1080px), -49%) scale(0.27) rotateY(34deg);
+      opacity: 0.07; z-index: 4;
     }
     .gallery-frame-item.pos-hidden {
       opacity: 0; pointer-events: none; z-index: 1;
-      transform: translate(calc(-50% + 1320px), -47%) scale(0.18) rotateY(-38deg);
+      transform: translate(calc(-50% + 1380px), -48%) scale(0.15) rotateY(-40deg);
     }
     .gallery-frame-item.pos-hidden.left {
-      transform: translate(calc(-50% - 1320px), -47%) scale(0.18) rotateY(38deg);
+      transform: translate(calc(-50% - 1380px), -48%) scale(0.15) rotateY(40deg);
     }
 
-    /* Light beam */
+    /* ── SPOTLIGHT BEAM ──────────────────────────────────────────── */
     .frame-beam {
       position: absolute;
-      bottom: calc(100% + 24px);
+      bottom: calc(100% + 12px);
       left: 50%;
       transform: translateX(-50%);
       width: 0; height: 0;
-      border-left: 100px solid transparent;
-      border-right: 100px solid transparent;
-      border-top: 240px solid rgba(255,245,200,0.032);
+      border-left: 120px solid transparent;
+      border-right: 120px solid transparent;
+      border-top: 300px solid rgba(255,245,200,0.025);
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.65s ease;
     }
     .gallery-frame-item.pos-active .frame-beam { opacity: 1; }
-    .frame-beam::before {
-      content: '';
-      position: absolute;
-      top: -260px;
-      left: -6px;
-      width: 12px; height: 12px;
-      background: rgba(255,250,200,0.85);
-      border-radius: 50%;
-      box-shadow: 0 0 14px 5px rgba(255,250,200,0.4);
-    }
 
-    /* ── PICTURE FRAME ────────────────────────────────────────────────── */
+    /* ── PICTURE FRAME ───────────────────────────────────────────── */
     .frame-outer {
       padding: 20px;
       background:
         linear-gradient(145deg,
-          #8a6228 0%,
-          #3d2808 25%,
-          #a87e38 50%,
-          #3a2608 75%,
-          #8a6228 100%
+          #8c6430 0%,
+          #3e2a09 25%,
+          #ac8240 50%,
+          #3b2708 75%,
+          #8c6430 100%
         );
       box-shadow:
-        0 40px 100px rgba(0,0,0,0.97),
-        0 10px 24px rgba(0,0,0,0.75),
-        inset 0 1px 0 rgba(255,255,255,0.14),
-        inset 0 -2px 5px rgba(0,0,0,0.65),
-        3px 3px 0 #1a1005,
-        6px 6px 0 #0f0904;
-      transition: box-shadow 0.6s ease;
+        0 50px 130px rgba(0,0,0,0.98),
+        0 14px 30px rgba(0,0,0,0.82),
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        inset 0 -3px 6px rgba(0,0,0,0.65),
+        3px 3px 0 #1c1106,
+        7px 7px 0 #100a04;
+      transition: box-shadow 0.65s ease;
     }
     .gallery-frame-item.pos-active .frame-outer {
       box-shadow:
-        0 40px 100px rgba(0,0,0,0.97),
-        0 10px 24px rgba(0,0,0,0.75),
-        inset 0 1px 0 rgba(255,255,255,0.14),
-        inset 0 -2px 5px rgba(0,0,0,0.65),
-        3px 3px 0 #1a1005,
-        6px 6px 0 #0f0904,
-        0 -24px 100px rgba(255,245,200,0.07),
-        0 0 50px rgba(255,245,200,0.05);
+        0 50px 130px rgba(0,0,0,0.98),
+        0 14px 30px rgba(0,0,0,0.82),
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        inset 0 -3px 6px rgba(0,0,0,0.65),
+        3px 3px 0 #1c1106,
+        7px 7px 0 #100a04,
+        0 -30px 130px rgba(255,245,200,0.09),
+        0 0 70px rgba(255,245,200,0.055);
     }
 
-    /* Bigger artwork canvas */
+    /* Artwork canvas — large focal point */
     .frame-artwork-img {
-      width: 420px;
-      height: 285px;
+      width: 460px;
+      height: 308px;
       object-fit: cover;
       display: block;
       background: #0a0a0a;
     }
     .frame-placeholder-img {
-      width: 420px;
-      height: 285px;
+      width: 460px;
+      height: 308px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -207,93 +227,25 @@
       border: 1px solid rgb(var(--accent) / 0.15);
     }
 
-    /* Frame label */
+    /* Label below frame — small index for side frames, hidden on active */
     .frame-label {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 14px;
       pointer-events: none;
     }
     .frame-label-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: rgb(var(--ink));
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .frame-label-meta {
       font-size: 12px;
       color: rgb(var(--ink2));
-      margin-top: 4px;
-      letter-spacing: 0.5px;
-    }
-    .frame-plaque {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 4px 14px;
-      border: 1px solid rgb(var(--accent) / 0.35);
-      border-radius: var(--radius);
-      background: rgb(var(--elevated) / 0.85);
-      font-size: 11px;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: rgb(var(--accent));
-      opacity: 0;
-      transform: translateY(5px);
-      transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
+      opacity: 0.6;
     }
-    .gallery-frame-item.pos-active .frame-plaque {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    /* Hide the text label on active frame — info panel shows it larger */
+    .gallery-frame-item.pos-active .frame-label-title { display: none; }
+    .frame-label-meta  { display: none; }
+    .frame-plaque      { display: none; }
 
-    /* ── BOTTOM INFO BAR ──────────────────────────────────────────────── */
-    .gallery-info-bar {
-      position: absolute;
-      bottom: 23%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      z-index: 20;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .gallery-info-text { text-align: center; }
-    .gallery-info-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: rgb(var(--ink));
-      letter-spacing: 1px;
-    }
-    .gallery-info-meta {
-      font-size: 13px;
-      color: rgb(var(--ink2));
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-    }
-    .btn-view-exhibit {
-      pointer-events: auto;
-      padding: 9px 20px;
-      border: 1px solid rgb(var(--accent) / 0.55);
-      border-radius: var(--radius);
-      background: rgb(var(--elevated) / 0.9);
-      color: rgb(var(--accent));
-      font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      transition: background 0.15s, box-shadow 0.15s;
-      white-space: nowrap;
-      backdrop-filter: blur(8px);
-    }
-    .btn-view-exhibit:hover {
-      background: rgb(var(--accent) / 0.15);
-      box-shadow: var(--glow);
-    }
-
-    /* ── NAVIGATION ───────────────────────────────────────────────────── */
+    /* ── NAV ARROWS — stay in the wall, clear of everything ─────── */
     .gallery-nav-btn {
       position: absolute;
       top: 50%;
@@ -307,70 +259,108 @@
       color: rgb(var(--accent));
       font-size: 22px;
       cursor: pointer;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       transition: background 0.15s, box-shadow 0.15s;
     }
     .gallery-nav-btn:hover { background: rgb(var(--elevated)); box-shadow: var(--glow); }
     .gallery-prev { left: 20px; }
     .gallery-next { right: 20px; }
 
-    /* Counter */
-    .gallery-counter {
-      position: absolute;
-      bottom: 23%;
-      right: 24px;
-      font-size: 13px;
-      color: rgb(var(--ink2));
-      letter-spacing: 1px;
-      z-index: 20;
-    }
-
-    /* Back to list */
-    .btn-back-list {
-      position: absolute;
-      top: 16px;
-      left: 20px;
-      z-index: 20;
-      font-size: 13px;
-      font-family: 'Space Mono', monospace;
-      color: rgb(var(--ink2));
-      text-decoration: none;
-      padding: 7px 14px;
-      border: 1px solid rgb(var(--accent) / 0.25);
-      border-radius: var(--radius);
-      background: rgb(var(--elevated) / 0.85);
-      backdrop-filter: blur(8px);
-      transition: color 0.12s, border-color 0.12s;
-    }
-    .btn-back-list:hover { color: rgb(var(--accent)); border-color: rgb(var(--accent) / 0.55); text-decoration: none; }
-
-    /* Dot navigation — lives on the floor */
-    .gallery-dots {
-      position: absolute;
-      bottom: 8%;
-      left: 50%;
-      transform: translateX(-50%);
+    /* ═══════════════════════════════════════════════════════════════
+       INFO PANEL  —  dedicated zone below the wall, never overlaps
+    ════════════════════════════════════════════════════════════════ */
+    .gallery-info-panel {
+      flex-shrink: 0;
+      background: #090707;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 20px 28px 16px;
       display: flex;
-      gap: 8px;
-      z-index: 20;
+      flex-direction: column;
+      gap: 14px;
     }
+
+    /* Row 1: title + meta left, buttons right */
+    .info-panel-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .info-panel-text { flex: 1; min-width: 0; }
+
+    .gallery-info-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: rgb(var(--ink));
+      letter-spacing: 0.5px;
+      margin: 0;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gallery-info-meta {
+      font-size: 13px;
+      color: rgb(var(--ink2));
+      letter-spacing: 0.5px;
+      margin: 6px 0 0;
+    }
+
+    .info-panel-actions {
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-view-exhibit {
+      padding: 10px 22px;
+      border: 1px solid rgb(var(--accent) / 0.55);
+      border-radius: var(--radius);
+      background: rgb(var(--elevated) / 0.95);
+      color: rgb(var(--accent));
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .btn-view-exhibit:hover {
+      background: rgb(var(--accent) / 0.14);
+      box-shadow: var(--glow);
+    }
+
+    /* Row 2: dots centred, with breathing room */
+    .info-panel-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+    }
+
     .gallery-dot {
       width: 8px; height: 8px;
       border-radius: 50%;
       background: rgb(var(--ink2));
-      opacity: 0.3;
+      opacity: 0.28;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.2s;
       border: none;
       padding: 0;
+      transition: opacity 0.2s, transform 0.22s;
     }
     .gallery-dot.active {
       opacity: 1;
       background: rgb(var(--accent));
-      transform: scale(1.4);
+      transform: scale(1.45);
     }
+    .gallery-dot:hover:not(.active) { opacity: 0.55; }
 
-    /* ── DETAIL MODAL ─────────────────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════════════
+       DETAIL MODAL
+    ════════════════════════════════════════════════════════════════ */
     .detail-modal {
       position: fixed;
       inset: 0;
@@ -383,10 +373,7 @@
       pointer-events: none;
       transition: opacity 0.3s ease;
     }
-    .detail-modal.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .detail-modal.open { opacity: 1; pointer-events: auto; }
 
     .detail-close {
       position: absolute;
@@ -395,7 +382,7 @@
       font-family: 'Space Mono', monospace;
       font-size: 13px;
       letter-spacing: 1px;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border: 1px solid rgb(var(--accent) / 0.3);
       border-radius: var(--radius);
       background: rgb(var(--elevated) / 0.9);
@@ -414,7 +401,6 @@
       overflow: hidden;
     }
 
-    /* Media column */
     .detail-media {
       flex: 1;
       display: flex;
@@ -434,26 +420,17 @@
       background: #050505;
     }
     #detail-hero-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
+      max-width: 100%; max-height: 100%;
+      object-fit: contain; display: block;
     }
-    #detail-iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-    }
+    #detail-iframe { width: 100%; height: 100%; border: 0; display: block; }
 
     .detail-thumbs {
-      display: flex;
-      gap: 10px;
+      display: flex; gap: 10px;
       overflow-x: auto;
       scrollbar-width: thin;
       scrollbar-color: rgb(var(--accent) / 0.3) transparent;
-      flex-shrink: 0;
-      padding-bottom: 4px;
+      flex-shrink: 0; padding-bottom: 4px;
     }
     .detail-thumbs::-webkit-scrollbar { height: 3px; }
     .detail-thumbs::-webkit-scrollbar-thumb { background: rgb(var(--accent) / 0.3); }
@@ -463,202 +440,164 @@
       width: 96px; height: 66px;
       border: 2px solid rgb(var(--accent) / 0.2);
       border-radius: var(--radius);
-      overflow: hidden;
-      cursor: pointer;
-      padding: 0;
-      background: #0a0a0a;
+      overflow: hidden; cursor: pointer; padding: 0; background: #0a0a0a;
       transition: border-color 0.15s;
     }
-    .detail-thumb.active { border-color: rgb(var(--accent)); }
-    .detail-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .detail-thumb:hover { border-color: rgb(var(--accent) / 0.6); }
+    .detail-thumb.active  { border-color: rgb(var(--accent)); }
+    .detail-thumb img     { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .detail-thumb:hover   { border-color: rgb(var(--accent) / 0.6); }
 
     .btn-video {
-      flex-shrink: 0;
-      align-self: flex-start;
+      flex-shrink: 0; align-self: flex-start;
       font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
       padding: 9px 20px;
       border: 1px solid rgb(var(--accent) / 0.4);
       border-radius: var(--radius);
       background: rgb(var(--accent) / 0.08);
       color: rgb(var(--accent));
-      cursor: pointer;
-      transition: background 0.15s;
+      cursor: pointer; transition: background 0.15s;
     }
-    .btn-video:hover { background: rgb(var(--accent) / 0.15); }
+    .btn-video:hover { background: rgb(var(--accent) / 0.16); }
 
-    /* Info column — wider and more readable */
     .detail-info {
-      width: 360px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
+      width: 360px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 18px;
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: rgb(var(--accent) / 0.2) transparent;
       padding-right: 6px;
     }
     .detail-eyebrow {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: rgb(var(--accent));
-      opacity: 0.75;
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: 2px; color: rgb(var(--accent)); opacity: 0.75;
     }
     .detail-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: rgb(var(--ink));
-      margin: 0;
-      letter-spacing: 0.5px;
-      line-height: 1.25;
+      font-size: 26px; font-weight: 700;
+      color: rgb(var(--ink)); margin: 0;
+      letter-spacing: 0.5px; line-height: 1.25;
     }
     .detail-desc {
-      font-size: 14px;
-      color: rgb(var(--ink2));
-      line-height: 1.85;
-      margin: 0;
+      font-size: 14px; color: rgb(var(--ink2));
+      line-height: 1.85; margin: 0;
     }
-    .detail-divider {
-      height: 1px;
-      background: rgb(var(--accent) / 0.1);
-      flex-shrink: 0;
-    }
-    .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .detail-divider { height: 1px; background: rgb(var(--accent) / 0.1); flex-shrink: 0; }
+    .detail-tags    { display: flex; flex-wrap: wrap; gap: 6px; }
     .detail-link {
-      display: inline-block;
-      font-size: 13px;
-      letter-spacing: 0.5px;
+      display: inline-block; font-size: 13px; letter-spacing: 0.5px;
       padding: 10px 20px;
       border: 1px solid rgb(var(--accent) / 0.5);
       border-radius: var(--radius);
-      color: rgb(var(--accent));
-      transition: background 0.15s;
-      align-self: flex-start;
+      color: rgb(var(--accent)); transition: background 0.15s; align-self: flex-start;
     }
     .detail-link:hover { background: rgb(var(--accent) / 0.1); text-decoration: none; }
     .detail-nav-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: auto;
-      padding-top: 14px;
+      display: flex; gap: 10px;
+      margin-top: auto; padding-top: 14px;
       border-top: 1px solid rgb(var(--accent) / 0.1);
     }
     .btn-detail-prev, .btn-detail-next {
-      flex: 1;
-      font-family: 'Space Mono', monospace;
-      font-size: 12px;
-      padding: 9px;
+      flex: 1; font-family: 'Space Mono', monospace;
+      font-size: 12px; padding: 9px;
       border: 1px solid rgb(var(--muted) / 0.4);
       border-radius: var(--radius);
-      background: transparent;
-      color: rgb(var(--ink2));
-      cursor: pointer;
+      background: transparent; color: rgb(var(--ink2));
+      cursor: pointer; letter-spacing: 0.5px;
       transition: color 0.12s, border-color 0.12s;
-      letter-spacing: 0.5px;
     }
     .btn-detail-prev:hover, .btn-detail-next:hover {
-      color: rgb(var(--ink));
-      border-color: rgb(var(--accent) / 0.4);
+      color: rgb(var(--ink)); border-color: rgb(var(--accent) / 0.4);
     }
 
-    /* ── RESPONSIVE ───────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
+    /* ── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 1000px) {
       .detail-info { width: 300px; }
-      .detail-title { font-size: 22px; }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
+      .frame-artwork-img, .frame-placeholder-img { width: 340px; height: 228px; }
       .gallery-frame-item.pos-next1 {
-        transform: translate(calc(-50% + 260px), -50%) scale(0.58) rotateY(-15deg);
-        opacity: 0.5;
+        transform: translate(calc(-50% + 320px), -52%) scale(0.6) rotateY(-17deg);
+        opacity: 0.42;
       }
       .gallery-frame-item.pos-prev1 {
-        transform: translate(calc(-50% - 260px), -50%) scale(0.58) rotateY(15deg);
-        opacity: 0.5;
+        transform: translate(calc(-50% - 320px), -52%) scale(0.6) rotateY(17deg);
+        opacity: 0.42;
       }
       .gallery-frame-item.pos-next2,
       .gallery-frame-item.pos-prev2,
       .gallery-frame-item.pos-next3,
       .gallery-frame-item.pos-prev3 { opacity: 0; pointer-events: none; }
+      .frame-outer { padding: 15px; }
 
-      .frame-artwork-img, .frame-placeholder-img { width: 260px; height: 178px; }
-      .frame-outer { padding: 14px; }
-      .frame-label-title { font-size: 13px; }
+      .gallery-info-title { font-size: 18px; }
+      .gallery-info-meta  { font-size: 12px; }
+      .btn-view-exhibit   { font-size: 12px; padding: 9px 16px; }
+      .gallery-nav-btn    { width: 44px; height: 44px; font-size: 19px; }
+      .gallery-prev { left: 10px; }
+      .gallery-next { right: 10px; }
 
-      .detail-inner { flex-direction: column; padding: 56px 16px 16px; gap: 14px; }
-      .detail-info { width: 100%; overflow-y: visible; gap: 12px; }
-      .detail-title { font-size: 20px; }
-      .detail-desc { font-size: 13px; }
-
-      .gallery-info-bar { gap: 12px; bottom: 24%; }
-      .gallery-info-title { font-size: 16px; }
-      .gallery-info-meta { font-size: 12px; }
-      .gallery-counter { bottom: 24%; right: 14px; font-size: 12px; }
-      .gallery-dots { bottom: 6%; }
-      .gallery-nav-btn { width: 42px; height: 42px; font-size: 18px; }
-      .gallery-prev { left: 8px; }
-      .gallery-next { right: 8px; }
+      .detail-inner  { flex-direction: column; padding: 56px 16px 16px; gap: 14px; }
+      .detail-info   { width: 100%; overflow-y: visible; gap: 12px; }
+      .detail-title  { font-size: 20px; }
+      .detail-desc   { font-size: 13px; }
     }
 
-    @media (max-width: 480px) {
-      .frame-artwork-img, .frame-placeholder-img { width: 210px; height: 145px; }
-      .frame-label-title { font-size: 12px; }
-      .gallery-info-title { font-size: 14px; }
-      .btn-view-exhibit { font-size: 11px; padding: 7px 14px; }
-      .gallery-nav-btn { width: 36px; height: 36px; font-size: 16px; }
+    @media (max-width: 500px) {
+      .frame-artwork-img, .frame-placeholder-img { width: 240px; height: 162px; }
+      .frame-outer { padding: 12px; }
+      .gallery-topbar { height: 46px; padding: 0 14px; }
+      .gallery-info-panel { padding: 14px 16px 12px; gap: 10px; }
+      .gallery-info-title { font-size: 16px; }
+      .btn-view-exhibit   { font-size: 11px; padding: 8px 13px; }
+      .gallery-nav-btn    { width: 38px; height: 38px; font-size: 16px; }
+      .gallery-prev { left: 4px; }
+      .gallery-next { right: 4px; }
     }
   </style>
 </head>
 <body>
-  <!-- Matrix rain -->
-  <canvas id="matrix-bg" aria-hidden="true" style="opacity:0.35"></canvas>
+  <canvas id="matrix-bg" aria-hidden="true" style="opacity:0.28"></canvas>
 
-  <!-- Gallery room -->
   <div class="gallery-room" id="gallery-hall">
-    <div class="room-ceiling"></div>
 
-    <div class="room-wall">
-      <!-- Frames populated by JS -->
-      <div class="frames-track" id="frames-track"></div>
-
-      <!-- Bottom info -->
-      <div class="gallery-info-bar">
-        <div class="gallery-info-text">
-          <div class="gallery-info-title" id="label-title">—</div>
-          <div class="gallery-info-meta" id="label-meta">—</div>
-        </div>
-        <button class="btn-view-exhibit" id="btn-view-detail">Ver exhibición →</button>
-      </div>
-
-      <div class="gallery-counter">
-        <span id="gallery-current">01</span> <span style="opacity:.4">/</span> <span id="gallery-total">06</span>
-      </div>
-
-      <!-- Nav arrows -->
-      <button class="gallery-nav-btn gallery-prev" id="gallery-prev" aria-label="Anterior">←</button>
-      <button class="gallery-nav-btn gallery-next" id="gallery-next" aria-label="Siguiente">→</button>
-
-      <!-- Dots -->
-      <div class="gallery-dots" id="gallery-dots" aria-label="Seleccionar exhibición"></div>
-
-      <!-- Back -->
+    <!-- ① Topbar: back link left, counter right -->
+    <div class="gallery-topbar">
       <a class="btn-back-list" href="index.html">← Lista</a>
+      <div class="gallery-counter">
+        <span id="gallery-current">01</span><span class="sep"> / </span><span id="gallery-total">06</span>
+      </div>
     </div>
 
-    <div class="room-floor"></div>
+    <!-- ② Wall: ONLY frames and nav arrows live here -->
+    <div class="room-wall">
+      <div class="frames-track" id="frames-track"></div>
+      <button class="gallery-nav-btn gallery-prev" id="gallery-prev" aria-label="Anterior">←</button>
+      <button class="gallery-nav-btn gallery-next" id="gallery-next" aria-label="Siguiente">→</button>
+    </div>
+
+    <!-- ③ Info panel: title / meta / button on one row, dots on another — never overlaps wall -->
+    <div class="gallery-info-panel">
+      <div class="info-panel-row">
+        <div class="info-panel-text">
+          <div class="gallery-info-title" id="label-title">—</div>
+          <div class="gallery-info-meta"  id="label-meta">—</div>
+        </div>
+        <div class="info-panel-actions">
+          <button class="btn-view-exhibit" id="btn-view-detail">Ver detalles →</button>
+        </div>
+      </div>
+      <div class="info-panel-dots">
+        <div class="gallery-dots" id="gallery-dots" aria-label="Seleccionar exhibición" style="display:flex;gap:9px;"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Project detail modal -->
   <div class="detail-modal" id="detail-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="detail-close" id="btn-close-detail">× Cerrar</button>
-
     <div class="detail-inner">
-      <!-- Media -->
       <div class="detail-media">
         <div id="detail-img-wrap">
           <img id="detail-hero-img" src="" alt="">
@@ -671,8 +610,6 @@
         <div class="detail-thumbs" id="detail-thumbs"></div>
         <button class="btn-video" id="btn-show-video" hidden>▶ Ver Video</button>
       </div>
-
-      <!-- Info -->
       <div class="detail-info">
         <div class="detail-eyebrow" id="detail-eyebrow"></div>
         <h2 class="detail-title" id="detail-title">—</h2>
@@ -716,7 +653,7 @@
   <script src="js/ui.js"></script>
   <script>
   (function() {
-    // ── MATRIX RAIN (dim version) ──────────────────────────────────────
+    // ── MATRIX RAIN ───────────────────────────────────────────────
     const canvas = document.getElementById('matrix-bg');
     const ctx = canvas.getContext('2d');
     canvas.width  = window.innerWidth;
@@ -741,7 +678,7 @@
       drops.forEach((y, i) => {
         const c = chars[Math.floor(Math.random() * chars.length)];
         ctx.fillStyle = color;
-        ctx.globalAlpha = 0.08 + Math.random() * 0.15;
+        ctx.globalAlpha = 0.06 + Math.random() * 0.13;
         ctx.fillText(c, i * fs, y * fs);
         ctx.globalAlpha = 1;
         if (y * fs > canvas.height && Math.random() > 0.975) drops[i] = 0;
@@ -751,7 +688,7 @@
     let last = 0;
     (function loop(ts) { if (ts - last > 60) { drawMatrix(); last = ts; } requestAnimationFrame(loop); })(0);
 
-    // ── GALLERY LOGIC ──────────────────────────────────────────────────
+    // ── GALLERY LOGIC ──────────────────────────────────────────────
     let exhibits = [];
     let activeIndex = 0;
 
@@ -775,7 +712,6 @@
         const s = localStorage.getItem('museo-exhibits-v3');
         exhibits = s ? JSON.parse(s) : (window.Data?.all?.exhibits || []);
       } catch { exhibits = window.Data?.all?.exhibits || []; }
-      // Ensure images array
       exhibits = exhibits.map(ex => ({
         ...ex,
         images: Array.isArray(ex.images) && ex.images.length
@@ -804,13 +740,11 @@
           </div>
           <div class="frame-label">
             <div class="frame-label-title">${esc(ex.title)}</div>
-            <div class="frame-label-meta">${ex.year || ''} · ${ex.type || 'proyecto'}</div>
-            <span class="frame-plaque">Ver detalles</span>
           </div>`;
         item.addEventListener('click', () => {
           const curPos = i - activeIndex;
-          if (curPos === 0) { openDetail(activeIndex); }
-          else { goTo(i); }
+          if (curPos === 0) openDetail(activeIndex);
+          else goTo(i);
         });
         track.appendChild(item);
       });
@@ -821,9 +755,7 @@
 
     function updatePositions() {
       document.querySelectorAll('.gallery-frame-item').forEach((el, i) => {
-        const pos = i - activeIndex;
-        // Remove all pos classes
-        el.className = `gallery-frame-item ${posClass(pos)}`;
+        el.className = `gallery-frame-item ${posClass(i - activeIndex)}`;
       });
       renderDots();
       updateLabel();
@@ -846,14 +778,11 @@
       const ex = exhibits[activeIndex];
       if (!ex) return;
       document.getElementById('label-title').textContent = ex.title;
-      document.getElementById('label-meta').textContent =
-        `${ex.year || ''} · ${ex.type || 'proyecto'}`;
+      document.getElementById('label-meta').textContent  = `${ex.year || ''} · ${ex.type || 'proyecto'}`;
     }
     function updateCounter() {
-      document.getElementById('gallery-current').textContent =
-        String(activeIndex + 1).padStart(2, '0');
-      document.getElementById('gallery-total').textContent =
-        String(exhibits.length).padStart(2, '0');
+      document.getElementById('gallery-current').textContent = String(activeIndex + 1).padStart(2, '0');
+      document.getElementById('gallery-total').textContent   = String(exhibits.length).padStart(2, '0');
     }
 
     function goTo(index) {
@@ -862,31 +791,24 @@
       updatePositions();
     }
 
-    // ── DETAIL MODAL ───────────────────────────────────────────────────
+    // ── DETAIL MODAL ───────────────────────────────────────────────
     function openDetail(index) {
       const ex = exhibits[index];
       if (!ex) return;
 
-      document.getElementById('detail-eyebrow').textContent =
-        `${ex.year || '—'} · ${ex.type || 'proyecto'}`;
-      document.getElementById('detail-title').textContent = ex.title;
-      document.getElementById('detail-desc').textContent  = ex.description || '';
+      document.getElementById('detail-eyebrow').textContent = `${ex.year || '—'} · ${ex.type || 'proyecto'}`;
+      document.getElementById('detail-title').textContent   = ex.title;
+      document.getElementById('detail-desc').textContent    = ex.description || '';
 
-      // Tags
       document.getElementById('detail-tags').innerHTML =
         (ex.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
 
-      // Link
       const linkEl = document.getElementById('detail-link');
       if (ex.link && ex.link !== '#' && ex.link !== '') {
-        linkEl.href   = ex.link;
-        linkEl.hidden = false;
-      } else {
-        linkEl.hidden = true;
-      }
+        linkEl.href = ex.link; linkEl.hidden = false;
+      } else { linkEl.hidden = true; }
 
-      // Images carousel
-      const images = ex.images?.length ? ex.images : [ex.media_url].filter(Boolean);
+      const images  = ex.images?.length ? ex.images : [ex.media_url].filter(Boolean);
       const heroImg = document.getElementById('detail-hero-img');
       heroImg.src = images[0] || '';
       heroImg.alt = ex.title;
@@ -909,7 +831,6 @@
         });
       }
 
-      // Video
       const videoBtn  = document.getElementById('btn-show-video');
       const videoWrap = document.getElementById('detail-video-wrap');
       const imgWrap   = document.getElementById('detail-img-wrap');
@@ -929,19 +850,14 @@
             videoBtn.hidden  = true;
           }
         };
-      } else {
-        videoBtn.hidden = true;
-      }
+      } else { videoBtn.hidden = true; }
 
-      // Prev/next inside modal
       document.getElementById('btn-detail-prev').onclick = () => {
-        closeDetail(false);
-        goTo(activeIndex - 1);
+        closeDetail(false); goTo(activeIndex - 1);
         setTimeout(() => openDetail(activeIndex), 50);
       };
       document.getElementById('btn-detail-next').onclick = () => {
-        closeDetail(false);
-        goTo(activeIndex + 1);
+        closeDetail(false); goTo(activeIndex + 1);
         setTimeout(() => openDetail(activeIndex), 50);
       };
 
@@ -957,7 +873,7 @@
       if (stopVideo) document.getElementById('detail-iframe').src = '';
     }
 
-    // ── WIRE EVENTS ────────────────────────────────────────────────────
+    // ── EVENTS ────────────────────────────────────────────────────
     document.getElementById('btn-view-detail')?.addEventListener('click', () => openDetail(activeIndex));
     document.getElementById('gallery-prev')?.addEventListener('click', () => goTo(activeIndex - 1));
     document.getElementById('gallery-next')?.addEventListener('click', () => goTo(activeIndex + 1));
@@ -965,37 +881,35 @@
 
     document.addEventListener('keydown', e => {
       if (document.getElementById('detail-modal').classList.contains('open')) {
-        if (e.key === 'Escape') closeDetail();
-        if (e.key === 'ArrowLeft')  document.getElementById('btn-detail-prev')?.click();
-        if (e.key === 'ArrowRight') document.getElementById('btn-detail-next')?.click();
+        if (e.key === 'Escape')      closeDetail();
+        if (e.key === 'ArrowLeft')   document.getElementById('btn-detail-prev')?.click();
+        if (e.key === 'ArrowRight')  document.getElementById('btn-detail-next')?.click();
         return;
       }
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    { e.preventDefault(); goTo(activeIndex - 1); }
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); goTo(activeIndex - 1); }
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  { e.preventDefault(); goTo(activeIndex + 1); }
-      if (e.key === 'Enter' || e.key === ' ')               { e.preventDefault(); openDetail(activeIndex); }
+      if (e.key === 'Enter'      || e.key === ' ')           { e.preventDefault(); openDetail(activeIndex); }
     });
 
-    // Touch swipe
     let touchX = 0;
     const hall = document.getElementById('gallery-hall');
     hall.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
     hall.addEventListener('touchend', e => {
       const diff = touchX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 55) goTo(activeIndex + (diff > 0 ? 1 : -1));
+      if (Math.abs(diff) > 50) goTo(activeIndex + (diff > 0 ? 1 : -1));
     });
 
-    // Mouse wheel
     let wheelLock = false;
     hall.addEventListener('wheel', e => {
       e.preventDefault();
       if (wheelLock) return;
-      if (e.deltaY > 30 || e.deltaX > 30) goTo(activeIndex + 1);
+      if (e.deltaY > 30 || e.deltaX > 30)   goTo(activeIndex + 1);
       else if (e.deltaY < -30 || e.deltaX < -30) goTo(activeIndex - 1);
       wheelLock = true;
       setTimeout(() => { wheelLock = false; }, 600);
     }, { passive: false });
 
-    // ── INIT ───────────────────────────────────────────────────────────
+    // ── INIT ──────────────────────────────────────────────────────
     loadExhibits();
     renderFrames();
   })();
